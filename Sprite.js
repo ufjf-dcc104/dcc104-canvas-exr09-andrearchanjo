@@ -5,9 +5,7 @@ function Sprite(){
   this.vy = 0;
   this.ax = 0;
   this.ay = 0;
-  this.g = 50;
-  this.pulo = 0;
-  this.chao = true;
+  this.g = 0;
   this.SIZE = 16;
   this.color = "rgba(0,0,0,0.3)";
   this.pose = 0;
@@ -24,17 +22,6 @@ function Sprite(){
   ];
   this.images = null;
   this.imgKey = "pc";
-}
-
-Sprite.prototype.tempoPulo = function (dt){
-  if(this.pulo > 0){
-    this.pulo -= dt;
-    this.chao = false;
-  } else{
-    this.pulo = 0;
-    this.chao = true;
-  }
-
 }
 
 Sprite.prototype.desenhar = function (ctx) {
@@ -168,34 +155,48 @@ Sprite.prototype.mover = function (map, dt) {
   this.gx = Math.floor(this.x/map.SIZE);
   this.gy = Math.floor(this.y/map.SIZE);
   //this.vy += 80*dt;
+
+  this.vy = (this.ay+this.g)*40*dt;
+  var yAnterior = this.y;
+
   if(this.vx>0 && map.cells[this.gy][this.gx+1]==1){
-    this.vx = this.vx + this.ax*dt;  
     this.x += Math.min((this.gx+1)*map.SIZE - (this.x+this.SIZE/2),this.vx*dt);
   } else if(this.vx <0 && map.cells[this.gy][this.gx-1]==1){
-      this.vx = this.vx + this.ax*dt;
-      this.x += Math.max((this.gx)*map.SIZE - (this.x-this.SIZE/2),this.vx*dt);
+    this.x += Math.max((this.gx)*map.SIZE - (this.x-this.SIZE/2),this.vx*dt);
   }
   else {
-    this.vx = this.vx + this.ax*dt;
     this.x = this.x + this.vx*dt;
   }
   if(this.vy >0 && map.cells[this.gy+1][this.gx]==1){
-    this.vy = this.vy + (this.ay+this.g)*dt;
-    this.y += Math.min((this.gy+1)*map.SIZE - (this.y+this.SIZE/2),this.vy*dt);
+    var v = Math.min((this.gy+1)*map.SIZE - (this.y+this.SIZE/2),this.vy*dt);
+    this.y += v;
   } else if( this.vy<0 && map.cells[this.gy-1][this.gx]==1){
-      this.vy = this.vy + (this.ay+this.g)*dt;
-      this.y += Math.max((this.gy)*map.SIZE - (this.y-this.SIZE/2),this.vy*dt);
-
+      var v = Math.max((this.gy)*map.SIZE - (this.y-this.SIZE/2),this.vy*dt);
+      this.y += v;
+      if(v == 0){
+        this.ay = 0;
+      }
     }
   else {
-    this.vy = this.vy + (this.ay+this.g)*dt;
     this.y = this.y + this.vy*dt;
   }
 
+  if(this.y == yAnterior){
+    this.pular = true;
+  } else {
+    this.pular = false;
+  }
+
+  if(this.ay < 200) {
+  this.ay+=this.g*2*dt;
+  }
+
+  //console.log(this.vy);
   // -- Clareando o caminho --
 
-  if(map.cells[this.gy][this.gx] != 2){
-    map.cells[this.gy][this.gx] = 2;
+  if(map.cells[this.gy][this.gx] == 3){
+    map.cells[this.gy][this.gx] = 0;
+    map.tesouros--;
   }
 
   this.frame += this.poses[this.pose].v*dt;

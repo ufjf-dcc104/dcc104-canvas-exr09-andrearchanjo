@@ -1,6 +1,7 @@
 function Map(rows, collumns) {
   this.SIZE = 32;
   this.victory = false;
+  this.tesouros = 0;
   this.cells = [];
   for (var r = 0; r < rows; r++) {
     this.cells[r] = [];
@@ -14,62 +15,39 @@ Map.prototype.desenhar = function (ctx, img) {
 
   for (var r = 0; r < this.cells.length; r++) {
     for (var c = 0; c < this.cells[0].length; c++) {
+      if(this.cells[r][c]==0){
+        ctx.fillStyle = "tan";
+        ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
+        ctx.strokeStyle = "tan";
+        ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
+      }
       if(this.cells[r][c]==1){
         ctx.fillStyle = "brown";
         ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
-        ctx.fillStroke = "black";
+        ctx.strokeStyle = "black";
         ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
       }
       if(this.cells[r][c]==2){
-        /*ctx.fillStyle = "white";
-        ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);*/
-        ctx.fillStroke = "black";
-        ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
+        ctx.fillStyle = "tan";
+        ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
+        //ctx.strokeStyle = "tan";
+        //ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
       }
       if(this.cells[r][c]==3){
-        ctx.fillStyle = "gray";
+        ctx.fillStyle = "green";
         ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
-        ctx.fillStroke = "black";
-        ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
-      }
-      if(this.cells[r][c] == 4){
-        ctx.fillStyle = "gray";
-        ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
-        ctx.fillStroke = "black";
-        ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
-      }
-      if(this.cells[r][c] == 5){
-        ctx.fillStyle = "gray";
-        ctx.fillRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
-        ctx.fillStroke = "black";
-        ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
+        //ctx.strokeStyle = "tan";
+        //ctx.strokeRect(c*this.SIZE, r*this.SIZE, this.SIZE, this.SIZE);
       }
     }
   }
 
-  
-
-};
-
-/*Map.prototype.colidiuCom = function (alvo, resolveColisao) {
-    for (var i = 0; i < this.tesouros.length; i++) {
-      if(this.tesouros[i].colidiuCom(alvo)){
-        resolveColisao(this.tesouros[i], alvo);
-      }
-    }
-};
-
-Map.prototype.colidiuComTesouro = function(pc){
-  for(var i = this.tesouros.length-1; i>=0; i--){
-
-    this.colidiuCom(pc,
-        function(tesouro){
-            tesouro.visivel = true;
-            console.log("aqui");
-        }
-      );
+  for (var i = 0; i < this.tesouros.length; i++) {
+      this.tesouros[i].desenharQuadrado(ctx);
+      //this.tesouros[i].desenharObjeto(ctx, img.images[this.tesouros[i].imgKey]);
   }
-};*/
+
+};
 
 Map.prototype.showInformations = function(ctx){
   
@@ -101,12 +79,7 @@ Map.prototype.setCells = function (newCells) {
           break;
         case 3:
           this.cells[i][j] = 3;
-          break;
-        case 4:
-          this.cells[i][j] = 4;
-          break;
-        case 5:
-          this.cells[i][j] = 5;
+          this.tesouros++;
           break;
         default:
           this.cells[i][j] = 0;
